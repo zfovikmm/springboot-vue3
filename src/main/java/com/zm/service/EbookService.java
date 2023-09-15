@@ -1,7 +1,7 @@
 package com.zm.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.zm.domain.Ebook;
+import com.zm.entity.Ebook;
 import com.zm.mapper.EbookMapper;
 import com.zm.req.EbookReq;
 import com.zm.resp.EbookResp;

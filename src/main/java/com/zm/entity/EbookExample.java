@@ -1,4 +1,4 @@
-package com.zm.domain;
+package com.zm.entity;
 
 import java.util.ArrayList;
 import java.util.List;
