@@ -43,6 +43,7 @@ public class EbookController {
         CommonResp<PageResp<EbookResp>> resp = new CommonResp<>();
         PageResp<EbookResp> list = ebookService.query(req);
         resp.setContent(list);
+        System.out.println(resp);
         return resp;
     }
 }

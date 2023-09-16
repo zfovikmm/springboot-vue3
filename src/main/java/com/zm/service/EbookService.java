@@ -69,9 +69,12 @@ public class EbookService {
 
         //使用工具类CopyUtil 将Ebook转换为EbookResp
         List<EbookResp> list = CopyUtil.copyList(ebooklist, EbookResp.class);
+        System.out.println(list);
         PageResp<EbookResp> pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
+        System.out.println(pageResp);
         pageResp.setList(list);
+        System.out.println(pageResp);
         return pageResp;
     }
 
