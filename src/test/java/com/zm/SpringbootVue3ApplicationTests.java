@@ -8,6 +8,7 @@ class SpringbootVue3ApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }
