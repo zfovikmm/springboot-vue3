@@ -5,8 +5,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zm.entity.Ebook;
 import com.zm.mapper.EbookMapper;
-import com.zm.req.EbookReq;
-import com.zm.resp.EbookResp;
+import com.zm.req.EbookQueryReq;
+import com.zm.req.EbookSaveReq;
+import com.zm.resp.EbookQueryResp;
 import com.zm.resp.PageResp;
 import com.zm.util.CopyUtil;
 import org.apache.commons.lang3.ObjectUtils;
@@ -23,7 +24,7 @@ public class EbookService {
     private EbookMapper ebookMapper;
 
     //查询
-    public List<EbookResp> list(){
+    public List<EbookQueryResp> list(){
         List<Ebook> ebooklist = ebookMapper.selectList(null);
         /*
         List<EbookResp> ebookResps = new ArrayList<>();
@@ -35,23 +36,23 @@ public class EbookService {
             ebookResps.add(ebookResp);
         }
          */
-        List<EbookResp> list = CopyUtil.copyList(ebooklist, EbookResp.class);
+        List<EbookQueryResp> list = CopyUtil.copyList(ebooklist, EbookQueryResp.class);
         return list;
     }
 
     //模糊查询
-    public List<EbookResp> list(EbookReq req){
+    public List<EbookQueryResp> list(EbookQueryReq req){
         //queryWrapper是mybatis plus中实现查询的对象封装操作类
         QueryWrapper<Ebook> queryWrapper = new QueryWrapper<>();
         queryWrapper.like("name",req.getName());
         List<Ebook> ebooklist = ebookMapper.selectList(queryWrapper);
         //使用工具类CopyUtil 将Ebook转换为EbookResp
-        List<EbookResp> list = CopyUtil.copyList(ebooklist, EbookResp.class);
+        List<EbookQueryResp> list = CopyUtil.copyList(ebooklist, EbookQueryResp.class);
         return list;
     }
 
     //模糊查询加查询全部 使用动态sql
-    public PageResp<EbookResp> query(EbookReq req){
+    public PageResp<EbookQueryResp> query(EbookQueryReq req){
 
         QueryWrapper<Ebook> queryWrapper = new QueryWrapper<>();
         if (!ObjectUtils.isEmpty(req.getName())){
@@ -68,9 +69,9 @@ public class EbookService {
 
 
         //使用工具类CopyUtil 将Ebook转换为EbookResp
-        List<EbookResp> list = CopyUtil.copyList(ebooklist, EbookResp.class);
+        List<EbookQueryResp> list = CopyUtil.copyList(ebooklist, EbookQueryResp.class);
         System.out.println(list);
-        PageResp<EbookResp> pageResp = new PageResp();
+        PageResp<EbookQueryResp> pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
         System.out.println(pageResp);
         pageResp.setList(list);
@@ -78,4 +79,15 @@ public class EbookService {
         return pageResp;
     }
 
+//    保存
+    public void save(EbookSaveReq req){
+        Ebook ebook = CopyUtil.copy(req,Ebook.class);
+        if(ObjectUtils.isEmpty(req.getId())){
+            //新增
+            ebookMapper.insert(ebook);
+        }else {
+            //保存
+            ebookMapper.updateById(ebook);
+        }
+    }
 }
