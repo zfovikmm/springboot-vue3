@@ -45,10 +45,20 @@ public class EbookController {
         return resp;
     }
 
+    //新增 编辑
     @PostMapping("/save")
     public CommonResp save(@RequestBody EbookSaveReq req){
         CommonResp resp = new CommonResp<>();
         ebookService.save(req);
+        return resp;
+    }
+
+    //删除
+    @DeleteMapping("/delete/{id}")
+    public CommonResp delete(@PathVariable Long id){
+//        返回一个空的响应实体 代表成功了
+        CommonResp resp = new CommonResp<>();
+        ebookService.delete(id);
         return resp;
     }
 }

@@ -97,4 +97,9 @@ public class EbookService {
             ebookMapper.updateById(ebook);
         }
     }
+
+//    删除
+    public void delete(Long id ){
+        ebookMapper.deleteById(id);
+    }
 }
