@@ -6,6 +6,7 @@ import com.zm.mapper.EbookMapper;
 import com.zm.req.EbookReq;
 import com.zm.resp.EbookResp;
 import com.zm.util.CopyUtil;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,8 +37,22 @@ public class EbookService {
 
     //模糊查询
     public List<EbookResp> list(EbookReq req){
+        //queryWrapper是mybatis plus中实现查询的对象封装操作类
         QueryWrapper<Ebook> queryWrapper = new QueryWrapper<>();
         queryWrapper.like("name",req.getName());
+        List<Ebook> ebooklist = ebookMapper.selectList(queryWrapper);
+        //使用工具类CopyUtil 将Ebook转换为EbookResp
+        List<EbookResp> list = CopyUtil.copyList(ebooklist, EbookResp.class);
+        return list;
+    }
+
+    //模糊查询加查询全部 使用动态sql
+    public List<EbookResp> query(EbookReq req){
+        QueryWrapper<Ebook> queryWrapper = new QueryWrapper<>();
+        if (!ObjectUtils.isEmpty(req.getName())){
+//          queryWrapper.like（“属性”,“值”）——模糊查询匹配值‘%值%’
+            queryWrapper.like("name",req.getName());
+        }
         List<Ebook> ebooklist = ebookMapper.selectList(queryWrapper);
         //使用工具类CopyUtil 将Ebook转换为EbookResp
         List<EbookResp> list = CopyUtil.copyList(ebooklist, EbookResp.class);
