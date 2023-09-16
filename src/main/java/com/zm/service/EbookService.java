@@ -10,6 +10,7 @@ import com.zm.req.EbookSaveReq;
 import com.zm.resp.EbookQueryResp;
 import com.zm.resp.PageResp;
 import com.zm.util.CopyUtil;
+import com.zm.util.SnowFlake;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,9 @@ public class EbookService {
 
     @Resource
     private EbookMapper ebookMapper;
+
+    @Resource
+    private SnowFlake snowFlake;
 
     //查询
     public List<EbookQueryResp> list(){
@@ -82,8 +86,11 @@ public class EbookService {
 //    保存
     public void save(EbookSaveReq req){
         Ebook ebook = CopyUtil.copy(req,Ebook.class);
-        if(ObjectUtils.isEmpty(req.getId())){
+        System.out.println("======="+req);
+        System.out.println("==========="+req.getId());
+        if(req.getId() == 0){
             //新增
+            ebook.setId(snowFlake.nextId());  //雪花算法生成id
             ebookMapper.insert(ebook);
         }else {
             //保存
