@@ -1,6 +1,7 @@
 package com.zm.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zm.entity.Ebook;
@@ -11,7 +12,6 @@ import com.zm.resp.EbookQueryResp;
 import com.zm.resp.PageResp;
 import com.zm.util.CopyUtil;
 import com.zm.util.SnowFlake;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
