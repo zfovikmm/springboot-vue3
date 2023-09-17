@@ -7,42 +7,21 @@
           mode="inline"
           :style="{ height: '100%', borderRight: 0 }"
       >
-        <a-sub-menu key="sub1">
-          <template #title>
-              <span>
-                <user-outlined />
-                subnav 1
-              </span>
+        <a-menu-item key="welcome">
+          <MailOutlined />
+          <span>欢迎</span>
+        </a-menu-item>
+        <a-sub-menu v-for="item in level1" :key="item.id" >
+          <template v-slot:title>
+            <span><user-outlined />{{item.name}}</span>
           </template>
-          <a-menu-item key="1">option1</a-menu-item>
-          <a-menu-item key="2">option2</a-menu-item>
-          <a-menu-item key="3">option3</a-menu-item>
-          <a-menu-item key="4">option4</a-menu-item>
+          <a-menu-item v-for="child in item.children" :key="child.id">
+            <MailOutlined /><span>{{child.name}}</span>
+          </a-menu-item>
         </a-sub-menu>
-        <a-sub-menu key="sub2">
-          <template #title>
-              <span>
-                <laptop-outlined />
-                subnav 2
-              </span>
-          </template>
-          <a-menu-item key="5">option5</a-menu-item>
-          <a-menu-item key="6">option6</a-menu-item>
-          <a-menu-item key="7">option7</a-menu-item>
-          <a-menu-item key="8">option8</a-menu-item>
-        </a-sub-menu>
-        <a-sub-menu key="sub3">
-          <template #title>
-              <span>
-                <notification-outlined />
-                subnav 3
-              </span>
-          </template>
-          <a-menu-item key="9">option9</a-menu-item>
-          <a-menu-item key="10">option10</a-menu-item>
-          <a-menu-item key="11">option11</a-menu-item>
-          <a-menu-item key="12">option12</a-menu-item>
-        </a-sub-menu>
+<!--        <a-menu-item key="tip" :disabled="true">-->
+<!--          <span>以上菜单在分类管理配置</span>-->
+<!--        </a-menu-item>-->
       </a-menu>
     </a-layout-sider>
     <a-layout style="padding: 0 24px 24px">
@@ -85,7 +64,38 @@
 import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
 const listData: Record<string, string>[] = [];
 
+
+/*
+查询所有分类
+ */
+const level1 = ref();
+let categorys: any;    //从显示分类一分类二 id 改为 分类一分类二 名称  改为全局变量
+const handleQueryCategory = () => {
+  axios.get("/category/list").then((response) => {
+    const data = response.data;
+    //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
+    if (data.success){
+      categorys = data.content;
+      console.log("原始数组",categorys);
+
+      level1.value = []
+      level1.value = Tool.array2Tree(categorys,0);
+      console.log("树形结构",level1.value)
+    }else {
+      //使用ant design vue的message
+      message.error(data.message)
+    }
+  });
+
+  const handleClick =() => {
+    console.log("menu click")
+  };
+}
+
+
+
 for (let i = 0; i < 23; i++) {
+
   listData.push({
     href: 'https://www.antdv.com/',
     title: `ant design vue part ${i}`,
@@ -111,11 +121,16 @@ const actions: Record<string, any>[] = [
 
 import { defineComponent,onMounted,ref} from 'vue';
 import axios from "axios";
+import {Tool} from "@/util/tool";
+import {message} from "ant-design-vue";
 export default defineComponent({
   name: 'HomeView',
   setup(){
     const ebooks = ref();
+
+    //初始化
     onMounted(() =>{
+      handleQueryCategory();
       axios.get("/list").then((response) => {
        const data = response.data;
        ebooks.value = data.content;
@@ -137,6 +152,9 @@ export default defineComponent({
         { icon: LikeOutlined, text: '156' },
         { icon: MessageOutlined, text: '2' },
       ],
+
+      //树级菜单
+      level1,
     }
   }
 });
