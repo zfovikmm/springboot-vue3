@@ -9,6 +9,7 @@ import com.zm.service.EbookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -37,7 +38,7 @@ public class EbookController {
 
     //模糊查询+查询全部
     @RequestMapping(value = "/query",method = RequestMethod.GET)
-    public CommonResp query(EbookQueryReq req){
+    public CommonResp query(@Valid EbookQueryReq req){
         CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
         PageResp<EbookQueryResp> list = ebookService.query(req);
         resp.setContent(list);
