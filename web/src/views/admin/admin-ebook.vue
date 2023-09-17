@@ -38,6 +38,11 @@
           <template #cover="{ text: cover }">
             <img v-if="cover" :src="cover" alt="avatar" />
           </template>
+
+<!--          从显示分类一分类二 id 改为 分类一分类二 名称-->
+          <template v-slot:category="{ text,record }">
+            <span>{{ getCategoryName(record.category1Id)}} / {{ getCategoryName(record.category2Id)}}</span>
+          </template>
           <template v-slot:action="{ text, record }">
             <a-space size="small">
               <a-button type="primary" @click="edit(record)">
@@ -113,13 +118,8 @@ export default defineComponent({
         dataIndex: 'name'
       },
       {
-        title: '分类一',
-        key: 'category1Id',
-        dataIndex: 'category1Id'
-      },
-      {
-        title: '分类二',
-        dataIndex: 'category2Id'
+        title: '分类',
+        slots: {customRender: 'category' }
       },
       {
         title: '文档数',
@@ -174,6 +174,7 @@ export default defineComponent({
     查询所有分类 级联组件使用需要
      */
     const level1 = ref();
+    let categorys: any;    //从显示分类一分类二 id 改为 分类一分类二 名称  改为全局变量
     const handleQueryCategory = () => {
       loading.value = true;
       axios.get("/category/list").then((response) => {
@@ -181,7 +182,7 @@ export default defineComponent({
         const data = response.data;
         //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
         if (data.success){
-          const categorys = data.content;
+          categorys = data.content;
           console.log("原始数组",categorys);
 
           level1.value = []
@@ -193,6 +194,19 @@ export default defineComponent({
         }
       });
     }
+
+    //从显示分类一分类二 id 改为 分类一分类二 名称  获取名称
+    const getCategoryName = (cid: number) => {
+      console.log(cid)
+      let result = "";
+      categorys.forEach((item: any) => {
+        console.log(item.id)
+        if (item.id == cid){
+          result = item.name;
+        }
+      });
+      return result;
+    };
 
     /**
      * 表格点击页码时触发
@@ -301,7 +315,8 @@ export default defineComponent({
 
       //级联变量返回
       categoryIds,
-      level1
+      level1,
+      getCategoryName
     }
   }
 });
