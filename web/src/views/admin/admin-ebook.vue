@@ -54,8 +54,6 @@
                   删除
                 </a-button>
               </a-popconfirm>
-
-
             </a-space>
           </template>
         </a-table>
@@ -70,11 +68,13 @@
         <a-form-item label="名称">
           <a-input v-model:value="ebook.name" />
         </a-form-item>
-        <a-form-item label="分类一">
-          <a-input v-model:value="ebook.category1Id"/>
-        </a-form-item>
-        <a-form-item label="分类二">
-          <a-input v-model:value="ebook.category2Id"/>
+        <a-form-item label="分类">
+<!--          级联组件-->
+          <a-cascader
+              v-model:value="categoryIds"
+              :field-names="{ label: 'name', value: 'id',children: 'children'}"
+              :options="level1"
+          />
         </a-form-item>
         <a-form-item label="描述">
           <a-input v-model:value="ebook.description" type="text"/>
@@ -167,10 +167,32 @@ export default defineComponent({
           //使用ant design vue的message
           message.error(data.message)
         }
-
-
       });
     };
+
+    /*
+    查询所有分类 级联组件使用需要
+     */
+    const level1 = ref();
+    const handleQueryCategory = () => {
+      loading.value = true;
+      axios.get("/category/list").then((response) => {
+        loading.value = false;
+        const data = response.data;
+        //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
+        if (data.success){
+          const categorys = data.content;
+          console.log("原始数组",categorys);
+
+          level1.value = []
+          level1.value = Tool.array2Tree(categorys,0);
+          console.log("树形结构",level1.value)
+        }else {
+          //使用ant design vue的message
+          message.error(data.message)
+        }
+      });
+    }
 
     /**
      * 表格点击页码时触发
@@ -183,13 +205,18 @@ export default defineComponent({
       });
     };
     //-------表单-------
-    const ebook = ref({});
+    const ebook = ref();
     const open = ref<boolean>(false);
     const ModelLoading = ref<boolean>(false);
+    //级联组件
+    const categoryIds = ref();
+
     //------------编辑
     const edit = (record: any) => {
       open.value = true;
       ebook.value = Tool.copy(record)
+      //级联组件
+      categoryIds.value = [ebook.value.category1Id,ebook.value.category2Id]
     };
 
     //------------新增
@@ -197,9 +224,6 @@ export default defineComponent({
       open.value = true;
       ebook.value = {}
     };
-
-
-
 
     //------------删除
     const handleDelete = (id: number) => {
@@ -219,6 +243,9 @@ export default defineComponent({
 
     const handleModalOk = () => {
       ModelLoading.value = true;
+    //  级联组件
+      ebook.value.category1Id = categoryIds.value[0];
+      ebook.value.category2Id = categoryIds.value[1];
     // -------保存--------
       axios.post("/save", ebook.value).then((response) => {
         //只要有返回就将loading效果去掉
@@ -240,7 +267,9 @@ export default defineComponent({
       });
     };
 
+    //初始
     onMounted(() => {
+      handleQueryCategory();
       handleQuery({
         page: 1,
         size: pagination.value.pageSize
@@ -259,7 +288,7 @@ export default defineComponent({
       param,
       handleQuery,
 
-    //按钮
+      //按钮
       edit,
       add,
       handleDelete,
@@ -268,7 +297,11 @@ export default defineComponent({
       ebook,
       ModelLoading,
       handleModalOk,
-      open
+      open,
+
+      //级联变量返回
+      categoryIds,
+      level1
     }
   }
 });
