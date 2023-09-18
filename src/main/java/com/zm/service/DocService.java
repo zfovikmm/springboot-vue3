@@ -91,7 +91,7 @@ public class DocService {
     //    保存
     public void save(DocSaveReq req){
         Doc doc = CopyUtil.copy(req,Doc.class);
-        if(req.getId() == null){
+        if(req.getId() == 0){
             //新增
             doc.setId(snowFlake.nextId());  //雪花算法生成id
             docMapper.insert(doc);

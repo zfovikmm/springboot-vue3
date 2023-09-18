@@ -10,7 +10,7 @@
         <p>
           <a-form layout="inline" :model="param">
             <a-form-item>
-              <a-button type="primary" @click="handleQuery({page: 1, size: pagination.pageSize})">
+              <a-button type="primary" @click="handleQuery({page: 1, size: 100})">
                 查询
               </a-button>
             </a-form-item>
@@ -98,10 +98,13 @@ import { defineComponent, onMounted, ref } from 'vue';
 import axios from 'axios';
 import {message} from "ant-design-vue";
 import {Tool} from "@/util/tool";
+import {useRoute} from "vue-router";
 
 export default defineComponent({
   name: 'AdminDoc',
   setup() {
+    //通过这个可以获取路由信息
+    const route = useRoute()
     const param = ref();
     param.value = {};
     const docs = ref();
@@ -189,7 +192,10 @@ export default defineComponent({
     //------------新增
     const add = () => {
       open.value = true;
-      doc.value = {}
+      doc.value = {
+        ebookId: route.query.ebookId
+      }
+
 
       treeSelectData.value = Tool.copy(level1.value);
 

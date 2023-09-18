@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class DocSaveReq {
 
-  private Long id;
+  private long id;
   @NotNull(message = "【电子书】不能为空")
   private long ebookId;
   @NotNull(message = "【父文档】不能为空")
