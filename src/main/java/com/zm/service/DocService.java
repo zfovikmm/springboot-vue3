@@ -105,4 +105,10 @@ public class DocService {
     public void delete(Long id ){
         docMapper.deleteById(id);
     }
+
+    //批量删除
+    public void delete(List<String> ids ){
+        System.out.println("ids===========>"+ids);
+        docMapper.deleteBatchIds(ids);
+    }
 }
