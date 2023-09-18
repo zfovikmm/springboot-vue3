@@ -91,8 +91,6 @@ public class CategoryService  {
     //    保存
     public void save(CategorySaveReq req){
         Category category = CopyUtil.copy(req,Category.class);
-        System.out.println("======="+req);
-        System.out.println("==========="+req.getId());
         if(req.getId() == null){
             //新增
             category.setId(snowFlake.nextId());  //雪花算法生成id

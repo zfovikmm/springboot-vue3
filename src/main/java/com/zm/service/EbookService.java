@@ -86,8 +86,6 @@ public class EbookService {
 //    保存
     public void save(EbookSaveReq req){
         Ebook ebook = CopyUtil.copy(req,Ebook.class);
-        System.out.println("======="+req);
-        System.out.println("==========="+req.getId());
         if(req.getId() == 0){
             //新增
             ebook.setId(snowFlake.nextId());  //雪花算法生成id
