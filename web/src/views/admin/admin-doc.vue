@@ -51,10 +51,12 @@
             </a-space>
           </template>
         </a-table>
+
       </a-layout-content>
     </a-layout>
 <!--    编辑弹出框-->
-    <a-modal v-model:open="open" title="文档表单" :confirm-loading="ModelLoading" @ok="handleModalOk">
+    <a-modal v-model:open="open" title="文档表单" :confirm-loading="ModelLoading" @ok="handleModalOk" :style="{ width: '800px' }"
+    >
       <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="wrapperCol">
         <a-form-item label="名称">
           <a-input v-model:value="doc.name" />
@@ -86,22 +88,33 @@
 <!--            </a-select-option>-->
 <!--          </a-select>-->
 <!--        </a-form-item>-->
-        <a-form-item label="排序">
+        <a-form-item label="顺序">
           <a-input v-model:value="doc.sort"/>
+        </a-form-item>
+        <a-form-item label="内容">
+          <MyEditor></MyEditor>
         </a-form-item>
       </a-form>
     </a-modal>
   </a-layout>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref , createVNode } from 'vue';
+import { defineComponent, onMounted, ref , createVNode , onBeforeUnmount, shallowRef} from 'vue';
 import axios from 'axios';
 import {message, Modal} from "ant-design-vue";
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
 import ExclamationCircleOutlined from "@ant-design/icons-vue/ExclamationCircleOutlined";
+
+//引入富文本组件
+import MyEditor from '../../components/MyEditor.vue'
+
+
 export default defineComponent({
   name: 'AdminDoc',
+  components:{
+    MyEditor
+  },
   setup() {
     //通过这个可以获取路由信息
     const route = useRoute()
@@ -166,6 +179,7 @@ export default defineComponent({
         }
       });
     };
+
 
     //-------表单-------
     //因为树选择组件的属性状态，会随当前编辑的节点而变化
@@ -343,7 +357,8 @@ export default defineComponent({
       open,
 
       //文档分类无限级树
-      treeSelectData
+      treeSelectData,
+
     }
   }
 });
