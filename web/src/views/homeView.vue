@@ -41,92 +41,42 @@
         </div>
         <!--       :pagination="pagination" 分页 -->
         <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3}"
-                :data-source="ebooks">
+                :data-source="booklist">
           <!--          循环ebooks，读取数据-->
           <template #renderItem="{ item }">
             <a-list-item key="item.name">
               <template #actions>
-                <!--                三个小图标-->
-                <span v-for="{ icon, text } in actions" :key="icon">
-                  <component :is="icon" style="margin-right: 6px"/>
-                  {{ text }}
-                </span>
+              <span>
+                <component v-bind:is="'FileOutlined'" style="margin-right: 8px" />
+                {{ item.docCount }}
+              </span>
+                <span>
+                <component v-bind:is="'UserOutlined'" style="margin-right: 8px" />
+                {{ item.viewCount }}
+              </span>
+                <span>
+                <component v-bind:is="'LikeOutlined'" style="margin-right: 8px" />
+                {{ item.voteCount }}
+              </span>
               </template>
               <a-list-item-meta :description="item.description">
                 <template #title>
-                  <a :href="item.href">{{ item.name }}</a>
+                  <router-link :to="'/doc?ebookId=' + item.id">
+                    {{ item.name }}
+                  </router-link>
                 </template>
-                <template #avatar>
-                  <a-avatar :src="item.cover"/>
-                </template>
+                <template #avatar><a-avatar :src="item.cover"/></template>
               </a-list-item-meta>
             </a-list-item>
           </template>
         </a-list>
+
       </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
 
 <script lang="ts">
-//content
-import {StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
-
-const listData: Record<string, string>[] = [];
-
-
-/*
-查询所有分类
- */
-const level1 = ref();
-let categorys: any;    //从显示分类一分类二 id 改为 分类一分类二 名称  改为全局变量
-const handleQueryCategory = () => {
-  axios.get("/category/list").then((response) => {
-    const data = response.data;
-    //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
-    if (data.success) {
-      categorys = data.content;
-      console.log("原始数组", categorys);
-
-      level1.value = []
-      level1.value = Tool.array2Tree(categorys, 0);
-      console.log("树形结构", level1.value)
-    } else {
-      //使用ant design vue的message
-      message.error(data.message)
-    }
-  });
-
-}
-//响应式变量 确认是否显示欢迎页面
-const isShowWelcome = ref(true);
-
-const handleClick = (value: any) => {
-  /*
-    if(value.key === 'welcome'){
-    isShowWelcome.value =true;
-  }else {
-    isShowWelcome.value =false;
-  }
-   */
-  isShowWelcome.value = value.key === 'welcome';
-}
-
-
-
-
-const pagination = {
-  onChange: (page: number) => {
-    console.log(page);
-  },
-  pageSize: 3,
-};
-const actions: Record<string, any>[] = [
-  {icon: StarOutlined, text: '156'},
-  {icon: LikeOutlined, text: '156'},
-  {icon: MessageOutlined, text: '2'},
-];
-
 import {defineComponent, onMounted, ref} from 'vue';
 import axios from "axios";
 import {Tool} from "@/util/tool";
@@ -136,30 +86,98 @@ export default defineComponent({
   name: 'HomeView',
   setup() {
     const ebooks = ref();
+    const openKeys =  ref();
+    const booklist = ref();
+
+    /*
+查询所有分类
+ */
+    const level1 = ref();
+    let categorys: any;    //从显示分类一分类二 id 改为 分类一分类二 名称  改为全局变量
+    const handleQueryCategory = () => {
+      axios.get("/category/list").then((response) => {
+        const data = response.data;
+        //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
+        if (data.success) {
+          categorys = data.content;
+          console.log("原始数组", categorys);
+
+          // 加载完分类后，将侧边栏全部展开
+          openKeys.value = [];
+          for (let i = 0; i < categorys.length; i++) {
+            openKeys.value.push(categorys[i].id)
+          }
+
+          level1.value = []
+          level1.value = Tool.array2Tree(categorys, 0);
+          console.log("树形结构", level1.value)
+        } else {
+          //使用ant design vue的message
+          message.error(data.message)
+        }
+      });
+    };
+
+    //响应式变量 确认是否显示欢迎页面
+    const isShowWelcome = ref(true);
+    let categoryId2 = 0;
+
+    /*
+    查询数据
+    */
+    const handleQueryEbook = () => {
+      const ebooks = ref();
+      axios.get("/query", {
+        params: {
+          page: 1,
+          size: 100,
+          categoryId2: categoryId2
+        }
+      }).then((response) => {
+        const data = response.data;
+        booklist.value = data.content.list;
+      });
+    }
+
+    const handleClick = (value: any) => {
+      if (value.key === 'welcome') {
+        isShowWelcome.value = true;
+      } else {
+        categoryId2 = value.key;
+        isShowWelcome.value = false;
+        handleQueryEbook();
+      }
+    }
 
     //初始化
     onMounted(() => {
       handleQueryCategory();
-      axios.get("/list").then((response) => {
-        const data = response.data;
-        ebooks.value = data.content;
-      });
-    })
+      //handleQueryEbook();
+    });
 
     return {
+      booklist,
       ebooks,
-      actions: [
-        {icon: StarOutlined, text: '156'},
-        {icon: LikeOutlined, text: '156'},
-        {icon: MessageOutlined, text: '2'},
-      ],
+      // actions: [
+      //   {icon: StarOutlined, text: '156'},
+      //   {icon: LikeOutlined, text: '156'},
+      //   {icon: MessageOutlined, text: '2'},
+      // ],
+      pagination: {
+        onChange: (page: any) => {
+          console.log(page);
+        },
+        pageSize: 3,
+      },
 
       //树级菜单
+      handleClick,
       level1,
 
       // 欢迎界面
       isShowWelcome,
-      handleClick,
+      openKeys
+
     }
   }
 });

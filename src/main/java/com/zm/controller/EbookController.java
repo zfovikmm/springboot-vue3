@@ -41,8 +41,9 @@ public class EbookController {
     public CommonResp query(@Valid EbookQueryReq req){
         CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
         PageResp<EbookQueryResp> list = ebookService.query(req);
+        System.out.println(list);
         resp.setContent(list);
-        System.out.println(resp);
+        System.out.println(resp.getContent());
         return resp;
     }
 

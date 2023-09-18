@@ -159,7 +159,6 @@ export default defineComponent({
         //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
         if (data.success){
           ebooks.value = data.content.list;
-
           // 重置分页按钮
           pagination.value.current = params.page;
           pagination.value.total = data.content.total;
@@ -204,10 +203,10 @@ export default defineComponent({
 
     //从显示分类一分类二 id 改为 分类一分类二 名称  获取名称
     const getCategoryName = (cid: number) => {
-      console.log(cid)
+
       let result = "";
       categorys.forEach((item: any) => {
-        console.log(item.id)
+
         if (item.id == cid){
           result = item.name;
         }
@@ -248,7 +247,6 @@ export default defineComponent({
 
     //------------删除
     const handleDelete = (id: number) => {
-      console.log("id======>"+id)
       axios.delete("/delete/"+ id ).then((response) => {
         const data = response.data;
         if (data.success){  //data = commonResp

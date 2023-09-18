@@ -1,8 +1,8 @@
 package com.zm.resp;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -15,11 +15,10 @@ import java.io.Serializable;
  * @since 2023-09-17
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class CategoryQueryResp implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     /**
      * id

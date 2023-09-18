@@ -63,6 +63,11 @@ public class EbookService {
 //          queryWrapper.like（“属性”,“值”）——模糊查询匹配值‘%值%’
             queryWrapper.like("name",req.getName());
         }
+//        点击导航栏时 列出电子书
+        if (!ObjectUtils.isEmpty(req.getCategoryId2())){
+//          queryWrapper.like（“属性”,“值”）——模糊查询匹配值‘%值%’
+            queryWrapper.like("category2_id",req.getCategoryId2());
+        }
         //分页查询
         PageHelper.startPage(req.getPage() ,req.getSize());
         List<Ebook> ebooklist = ebookMapper.selectList(queryWrapper);
@@ -70,16 +75,11 @@ public class EbookService {
         pageInfo.getTotal();        //总行数 传给前端
         //pageInfo.getPages();        //总页数
 
-
-
         //使用工具类CopyUtil 将Ebook转换为EbookResp
         List<EbookQueryResp> list = CopyUtil.copyList(ebooklist, EbookQueryResp.class);
-        System.out.println(list);
         PageResp<EbookQueryResp> pageResp = new PageResp();
         pageResp.setTotal(pageInfo.getTotal());
-        System.out.println(pageResp);
         pageResp.setList(list);
-        System.out.println(pageResp);
         return pageResp;
     }
 
