@@ -60,17 +60,32 @@
           <a-input v-model:value="doc.name" />
         </a-form-item>
         <a-form-item label="父文档">
-          <a-input v-model:value="doc.parent"/>
-          <a-select
-              ref="select"
+          <a-tree-select
               v-model:value="doc.parent"
+              show-search
+              style="width: 100%"
+              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+              allow-clear
+              tree-default-expand-all
+              :tree-data="treeSelectData"
+              placeholder="请选择父文档"
+              tree-node-filter-prop="label"
+              :replaceFields="{label: 'name',key: 'id',value: 'id'}"
           >
-            <a-select-option value="0">无</a-select-option><!--doc.id === c.id 如果当前表单的id跟选项的id是一样 就不能选-->
-            <a-select-option v-for=" c in level1" :key="c.id" :value="c.id" :disabled="doc.id === c.id">
-              {{c.name}}
-            </a-select-option>
-          </a-select>
+          </a-tree-select>
         </a-form-item>
+<!--        <a-form-item label="父文档">-->
+<!--          <a-input v-model:value="doc.parent"/>-->
+<!--          <a-select-->
+<!--              ref="select"-->
+<!--              v-model:value="doc.parent"-->
+<!--          >-->
+<!--            <a-select-option value="0">无</a-select-option>&lt;!&ndash;doc.id === c.id 如果当前表单的id跟选项的id是一样 就不能选&ndash;&gt;-->
+<!--            <a-select-option v-for=" c in level1" :key="c.id" :value="c.id" :disabled="doc.id === c.id">-->
+<!--              {{c.name}}-->
+<!--            </a-select-option>-->
+<!--          </a-select>-->
+<!--        </a-form-item>-->
         <a-form-item label="排序">
           <a-input v-model:value="doc.sort"/>
         </a-form-item>
@@ -150,6 +165,10 @@ export default defineComponent({
     };
 
     //-------表单-------
+    //因为树选择组件的属性状态，会随当前编辑的节点而变化
+    const treeSelectData = ref();
+    treeSelectData.value = [];
+
     const doc = ref({});
     const open = ref<boolean>(false);
     const ModelLoading = ref<boolean>(false);
@@ -157,14 +176,56 @@ export default defineComponent({
     const edit = (record: any) => {
       open.value = true;
       doc.value = Tool.copy(record)
+
+      //不能选择当前节点机器所有子孙节点，所有父节点，会使树断开
+      treeSelectData.value = Tool.copy(level1.value);
+      setDisable(treeSelectData.value,record.id);
+
+      //为选择树添加一个 “无”
+      treeSelectData.value.unshift({id: 0, name: '无'})
+
     };
 
     //------------新增
     const add = () => {
       open.value = true;
       doc.value = {}
+
+      treeSelectData.value = Tool.copy(level1.value);
+
+      //为选择树添加一个“无”
+      treeSelectData.value.unshift({id: 0,name: '无'})
     };
 
+    /*
+    将某节点及其子孙节点全部置为disabled
+     */
+    const setDisable = (treeSelectData: any,id: any) => {
+      //遍历数组，即遍历某一层节点
+      for(let i=0;i<treeSelectData.length;i++){
+        const node = treeSelectData[i];
+        if(node.id === id){
+          //如果当前节点就是目标节点
+          console.log("disabled",node);
+          //将目标节点设置位disabled
+          node.disabled = true;
+
+          //遍历所有字节点，将所有字节点全部都加上disabled
+          const children = node.children;
+          if (Tool.isNotEmpty(children)){
+            for(let j=0;j< children.length;j++){
+              setDisable(children,children[j].id)
+            }
+          }else {
+            // 如果当前节点不是目标节点，则到其子节点再找找看。
+            const children = node.children;
+            if (Tool.isNotEmpty(children)) {
+              setDisable(children, id);
+            }
+          }
+        }
+      }
+    }
 
 
 
@@ -223,7 +284,10 @@ export default defineComponent({
       doc,
       ModelLoading,
       handleModalOk,
-      open
+      open,
+
+      //文档分类无限级树
+      treeSelectData
     }
   }
 });
