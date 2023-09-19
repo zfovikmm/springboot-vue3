@@ -1,12 +1,13 @@
 package com.zm.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.zm.entity.Content;
 import com.zm.entity.User;
-import com.zm.mapper.ContentMapper;
+import com.zm.exception.BusinessException;
+import com.zm.exception.BusinessExceptionCode;
 import com.zm.mapper.UserMapper;
 import com.zm.req.UserQueryReq;
 import com.zm.req.UserSaveReq;
@@ -35,8 +36,6 @@ public class UserService {
     @Resource
     private SnowFlake snowFlake;
 
-    @Resource
-    private ContentMapper contentMapper;
     //查询
     public List<UserQueryResp> list(){
         List<User> userlist = userMapper.selectList(null);
@@ -96,20 +95,21 @@ public class UserService {
     //    保存
     public void save(UserSaveReq req){
         User user = CopyUtil.copy(req,User.class);
-        Content content = CopyUtil.copy(req,Content.class);
-        System.out.println("content==========>"+content);
         if(req.getId() == 0){
-            //新增
-            user.setId(snowFlake.nextId());  //雪花算法生成id
-            userMapper.insert(user);
 
-            //新增 内容
-            content.setId(user.getId());  //雪花算法生成id
-            contentMapper.insert(content);
+            User userDB = selectByLoginName(req.getLoginName());
+            if(ObjectUtils.isEmpty(userDB)){
+                //新增
+                user.setId(snowFlake.nextId());  //雪花算法生成id
+                userMapper.insert(user);
+            }else {
+                //用户名已存在
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
+
         }else {
             //更新
             userMapper.updateById(user);
-            contentMapper.updateById(content);
         }
     }
 
@@ -122,5 +122,17 @@ public class UserService {
     public void delete(List<String> ids ){
         System.out.println("ids===========>"+ids);
         userMapper.deleteBatchIds(ids);
+    }
+
+    //校验用户名不能重复
+    public User selectByLoginName(String LoginName){
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("login_name",LoginName);
+        List<User> userList = userMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(userList)){
+            return null;
+        }else {
+           return userList.get(0);
+        }
     }
 }
