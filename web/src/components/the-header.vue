@@ -21,27 +21,27 @@
         <a-menu-item key="/about">
           <router-link to="/about">关于我们</router-link>
         </a-menu-item>
-      </div>
-      <div class="login-menu">
-        <a-popconfirm
-            title="确认退出登录?"
-            ok-text="是"
-            cancel-text="否"
-            @confirm="logout()"
-        >
-          <a class="login-menu" v-show="user.id">
-            <span>退出登录</span>
-          </a>
-        </a-popconfirm>
-        <a class="login-menu" v-show="user.id">
-          <span>您好：{{ user.name }}</span>
-        </a>
-        <a class="login-menu" v-show="!user.id" @click="showLoginModal">
-          <span>登录</span>
-        </a>
+        <div class="login-menu">
+          <a-popconfirm
+              title="确认退出登录?"
+              ok-text="是"
+              cancel-text="否"
+              @confirm="logout()"
+          >
+            <item class="login-menu" v-show="user.id">
+              <span>退出登录</span>
+            </item>
+          </a-popconfirm>
+          <item class="login-menu" v-show="user.id">
+            <span>您好：{{ user.name }}</span>
+          </item>
+          <item class="login-menu" v-show="!user.id" @click="showLoginModal">
+            <span>登录</span>
+          </item>
+        </div>
+
       </div>
     </a-menu>
-
     <a-modal
         title="登录"
         v-model:visible="loginModalVisible"
@@ -101,6 +101,7 @@ export default defineComponent({
           loginModalVisible.value = false;
           message.success("登录成功！");
           store.commit("setUser", data.content);
+          window.location.reload(); // 刷新页面
         } else {
           message.error(data.message);
         }
@@ -115,6 +116,7 @@ export default defineComponent({
         if (data.success) {
           message.success("退出登录成功！");
           store.commit("setUser", {});
+          window.location.reload(); // 刷新页面
         } else {
           message.error(data.message);
         }
