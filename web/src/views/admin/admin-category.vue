@@ -144,6 +144,7 @@ export default defineComponent({
 
         }else {
           //使用ant design vue的message
+          console.log("/category/list")
           message.error(data.message)
         }
       });

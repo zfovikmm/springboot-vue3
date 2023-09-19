@@ -84,8 +84,6 @@ public class UserController {
 
         //将字符串转为集合
        List<String> list = Arrays.asList(idStr.split(","));
-        System.out.println("idStr==========>"+idStr);
-        System.out.println("list===========>"+list);
         userService.delete(list);
         return resp;
     }
@@ -113,9 +111,18 @@ public class UserController {
         LOG.info("生成单点登录token，并放入redis中",token);
 
         userLoginResp.setToken(token.toString());
-        redisTemplate.opsForValue().set(token,JSONObject.toJSONString(userLoginResp),3600*24, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(token.toString(),JSONObject.toJSONString(userLoginResp),3600*24, TimeUnit.SECONDS);
 
         resp.setContent(userLoginResp);
+        return resp;
+    }
+
+    @GetMapping("/logout/{token}")
+    public CommonResp logout(@PathVariable String token){
+//        返回一个空的响应实体 代表成功了
+        CommonResp resp = new CommonResp<>();
+        redisTemplate.delete(token);
+        LOG.info("从redis中删除token：{}",token);
         return resp;
     }
 }

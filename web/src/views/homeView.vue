@@ -99,6 +99,7 @@ export default defineComponent({
         const data = response.data;
         //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
         if (data.success) {
+
           categorys = data.content;
           console.log("原始数组", categorys);
 
@@ -113,6 +114,7 @@ export default defineComponent({
           console.log("树形结构", level1.value)
         } else {
           //使用ant design vue的message
+          console.log("失败")
           message.error(data.message)
         }
       });
