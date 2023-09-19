@@ -10,6 +10,7 @@ import com.zm.exception.BusinessException;
 import com.zm.exception.BusinessExceptionCode;
 import com.zm.mapper.UserMapper;
 import com.zm.req.UserQueryReq;
+import com.zm.req.UserResetPasswordReq;
 import com.zm.req.UserSaveReq;
 import com.zm.resp.PageResp;
 import com.zm.resp.UserQueryResp;
@@ -109,6 +110,7 @@ public class UserService {
 
         }else {
             //更新
+            user.setPassword(null);
             userMapper.updateById(user);
         }
     }
@@ -134,5 +136,11 @@ public class UserService {
         }else {
            return userList.get(0);
         }
+    }
+
+    //重置密码
+    public void resetPassword(UserResetPasswordReq req){
+        User user = CopyUtil.copy(req,User.class);
+        userMapper.updateById(user);
     }
 }

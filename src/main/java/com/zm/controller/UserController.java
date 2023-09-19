@@ -1,10 +1,11 @@
 package com.zm.controller;
 
 import com.zm.req.UserQueryReq;
+import com.zm.req.UserResetPasswordReq;
 import com.zm.req.UserSaveReq;
 import com.zm.resp.CommonResp;
-import com.zm.resp.UserQueryResp;
 import com.zm.resp.PageResp;
+import com.zm.resp.UserQueryResp;
 import com.zm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -69,6 +70,16 @@ public class UserController {
         System.out.println("idStr==========>"+idStr);
         System.out.println("list===========>"+list);
         userService.delete(list);
+        return resp;
+    }
+
+    //重置密码
+    @PostMapping("/reset-password")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req){
+        //用md5加密 密码 通过这句话就变成了一个32位的16进制的字符串
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp resp = new CommonResp<>();
+        userService.resetPassword(req);
         return resp;
     }
 }
