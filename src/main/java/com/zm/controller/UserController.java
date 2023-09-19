@@ -7,6 +7,7 @@ import com.zm.resp.UserQueryResp;
 import com.zm.resp.PageResp;
 import com.zm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -50,6 +51,8 @@ public class UserController {
     //新增 编辑
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody  UserSaveReq req){
+        //用md5加密 密码 通过这句话就变成了一个32位的16进制的字符串
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.save(req);
         return resp;
