@@ -3,7 +3,9 @@ package com.zm.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.zm.entity.Content;
 import com.zm.entity.Doc;
+import com.zm.mapper.ContentMapper;
 import com.zm.mapper.DocMapper;
 import com.zm.req.DocQueryReq;
 import com.zm.req.DocSaveReq;
@@ -32,6 +34,8 @@ public class DocService {
     @Resource
     private SnowFlake snowFlake;
 
+    @Resource
+    private ContentMapper contentMapper;
     //查询
     public List<DocQueryResp> list(){
         List<Doc> doclist = docMapper.selectList(null);
@@ -91,13 +95,20 @@ public class DocService {
     //    保存
     public void save(DocSaveReq req){
         Doc doc = CopyUtil.copy(req,Doc.class);
+        Content content = CopyUtil.copy(req,Content.class);
+        System.out.println("content==========>"+content);
         if(req.getId() == 0){
             //新增
             doc.setId(snowFlake.nextId());  //雪花算法生成id
             docMapper.insert(doc);
+
+            //新增 内容
+            content.setId(doc.getId());  //雪花算法生成id
+            contentMapper.insert(content);
         }else {
-            //保存
+            //更新
             docMapper.updateById(doc);
+            contentMapper.updateById(content);
         }
     }
 

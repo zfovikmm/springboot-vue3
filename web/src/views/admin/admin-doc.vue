@@ -118,7 +118,7 @@
   </a-layout>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref , createVNode , onBeforeUnmount, shallowRef} from 'vue';
+import { defineComponent, onMounted, ref , createVNode , inject} from 'vue';
 import axios from 'axios';
 import {message, Modal} from "ant-design-vue";
 import {Tool} from "@/util/tool";
@@ -141,7 +141,8 @@ export default defineComponent({
     param.value = {};
     const docs = ref();
     const loading = ref(false);
-
+    //获取富文本内容
+    const valueHtmlFromChild = inject('valueHtml')
     const columns = [
       {
         title: '名称',
@@ -206,7 +207,8 @@ export default defineComponent({
     const treeSelectData = ref();
     treeSelectData.value = [];
 
-    const doc = ref({});
+    const doc = ref();
+    doc.value = {};
     const open = ref<boolean>(false);
     const ModelLoading = ref<boolean>(false);
     //------------编辑
@@ -333,6 +335,10 @@ export default defineComponent({
 
     const handleSave = () => {
       ModelLoading.value = true;
+
+      console.log("MyEditor.value.valueHtml======》")
+      doc.value.content = "123123"
+
     // -------保存--------
       axios.post("/doc/save", doc.value).then((response) => {
         //只要有返回就将loading效果去掉

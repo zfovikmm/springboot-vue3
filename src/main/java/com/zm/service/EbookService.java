@@ -27,6 +27,8 @@ public class EbookService {
     @Resource
     private SnowFlake snowFlake;
 
+
+
     //查询
     public List<EbookQueryResp> list(){
         List<Ebook> ebooklist = ebookMapper.selectList(null);
