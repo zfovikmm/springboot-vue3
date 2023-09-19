@@ -1,10 +1,12 @@
 package com.zm.controller;
 
+import com.zm.req.UserLoginReq;
 import com.zm.req.UserQueryReq;
 import com.zm.req.UserResetPasswordReq;
 import com.zm.req.UserSaveReq;
 import com.zm.resp.CommonResp;
 import com.zm.resp.PageResp;
+import com.zm.resp.UserLoginResp;
 import com.zm.resp.UserQueryResp;
 import com.zm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +82,17 @@ public class UserController {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
         CommonResp resp = new CommonResp<>();
         userService.resetPassword(req);
+        return resp;
+    }
+
+    //登录
+    @PostMapping("/login")
+    public CommonResp login(@Valid @RequestBody UserLoginReq req){
+        //登录进行加密 好对数据库中密码进行比较
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp<UserLoginResp> resp = new CommonResp<>();
+        UserLoginResp userLoginResp = userService.login(req);
+        resp.setContent(userLoginResp);
         return resp;
     }
 }

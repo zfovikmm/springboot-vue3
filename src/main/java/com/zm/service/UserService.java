@@ -9,10 +9,12 @@ import com.zm.entity.User;
 import com.zm.exception.BusinessException;
 import com.zm.exception.BusinessExceptionCode;
 import com.zm.mapper.UserMapper;
+import com.zm.req.UserLoginReq;
 import com.zm.req.UserQueryReq;
 import com.zm.req.UserResetPasswordReq;
 import com.zm.req.UserSaveReq;
 import com.zm.resp.PageResp;
+import com.zm.resp.UserLoginResp;
 import com.zm.resp.UserQueryResp;
 import com.zm.util.CopyUtil;
 import com.zm.util.SnowFlake;
@@ -142,5 +144,36 @@ public class UserService {
     public void resetPassword(UserResetPasswordReq req){
         User user = CopyUtil.copy(req,User.class);
         userMapper.updateById(user);
+    }
+    //登录
+    /*
+    思考：要验证用户名密码，是按用户名+密码去数据库查，还是只按用户名去数据库查
+    这里，应该只按用户名去查
+    这样的话，服务端就不知道是用户名错还是密码错了，知道是哪个错是有意义的
+    如果大量出现用户名错，有可能黑客拿了一堆用户名在那试，如果是大量密码错，有可能黑客想破解具体某个用户
+     */
+    public UserLoginResp login(UserLoginReq req){
+        User userDB = selectByLoginName(req.getLoginName());
+        if(ObjectUtils.isEmpty(userDB)){
+            //用户名不存在
+
+            //日志输出
+            //  LOG.info("用户名不存在, {}", req.getLoginName());
+
+            //抛出异常
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        }else {
+            if(userDB.getPassword().equals(req.getPassword())){
+                //登录成功
+                UserLoginResp userLoginResp = CopyUtil.copy(userDB,UserLoginResp.class);
+                return userLoginResp;
+            }else {
+                //密码错误
+                // 密码不对
+                //LOG.info("密码不对, 输入密码：{}, 数据库密码：{}", req.getPassword(), userDb.getPassword());
+                //抛出异常
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
     }
 }
