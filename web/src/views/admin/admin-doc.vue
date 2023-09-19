@@ -7,95 +7,101 @@
       <a-layout-content
           :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
       >
-        <p>
-          <a-form layout="inline" :model="param">
-            <a-form-item>
-              <a-button type="primary" @click="handleQuery({page: 1, size: 100})">
-                查询
-              </a-button>
-            </a-form-item>
+        <a-row>
+          <a-col :span="8">
+            <p>
+              <a-form layout="inline" :model="param">
+                <a-form-item>
+                  <a-button type="primary" @click="handleQuery({page: 1, size: 100})">
+                    查询
+                  </a-button>
+                </a-form-item>
 
-            <a-form-item>
-              <a-button type="primary" @click="add()" >
-                新增
-              </a-button>
-            </a-form-item>
-          </a-form>
-        </p>
-        <a-table
-            :columns="columns"
-            :row-key="record => record.id"
-            :data-source="level1"
-            :loading="loading"
-            :pagination="false"
-        >
-          <template #cover="{ text: cover }">
-            <img v-if="cover" :src="cover" alt="avatar" />
-          </template>
-          <template v-slot:action="{ text, record }">
-            <a-space size="small">
-              <a-button type="primary" @click="edit(record)">
-                编辑
-              </a-button>
-<!--                    气泡确认框-->
-              <a-popconfirm
-                  title="删除后不可恢复，确认删除？"
-                  ok-text="是"
-                  cancel-text="否"
-                  @confirm="handleDelete(record.id)"
-              >
-                <a-button type="danger" >
-                  删除
-                </a-button>
-              </a-popconfirm>
-            </a-space>
-          </template>
-        </a-table>
-
+                <a-form-item>
+                  <a-button type="primary" @click="add()" >
+                    新增
+                  </a-button>
+                </a-form-item>
+              </a-form>
+            </p>
+            <a-table
+                :columns="columns"
+                :row-key="record => record.id"
+                :data-source="level1"
+                :loading="loading"
+                :pagination="false"
+            >
+              <template #cover="{ text: cover }">
+                <img v-if="cover" :src="cover" alt="avatar" />
+              </template>
+              <template v-slot:action="{ text, record }">
+                <a-space size="small">
+                  <a-button type="primary" @click="edit(record)">
+                    编辑
+                  </a-button>
+                  <!--                    气泡确认框-->
+                  <a-popconfirm
+                      title="删除后不可恢复，确认删除？"
+                      ok-text="是"
+                      cancel-text="否"
+                      @confirm="handleDelete(record.id)"
+                  >
+                    <a-button type="danger" >
+                      删除
+                    </a-button>
+                  </a-popconfirm>
+                </a-space>
+              </template>
+            </a-table>
+          </a-col>
+          <a-col :span="16">
+            <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="wrapperCol">
+              <a-form-item label="名称">
+                <a-input v-model:value="doc.name" />
+              </a-form-item>
+              <a-form-item label="父文档">
+                <a-tree-select
+                    v-model:value="doc.parent"
+                    show-search
+                    style="width: 100%"
+                    :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                    allow-clear
+                    tree-default-expand-all
+                    :tree-data="treeSelectData"
+                    placeholder="请选择父文档"
+                    tree-node-filter-prop="label"
+                    :replaceFields="{label: 'name',key: 'id',value: 'id'}"
+                >
+                </a-tree-select>
+              </a-form-item>
+              <!--        <a-form-item label="父文档">-->
+              <!--          <a-input v-model:value="doc.parent"/>-->
+              <!--          <a-select-->
+              <!--              ref="select"-->
+              <!--              v-model:value="doc.parent"-->
+              <!--          >-->
+              <!--            <a-select-option value="0">无</a-select-option>&lt;!&ndash;doc.id === c.id 如果当前表单的id跟选项的id是一样 就不能选&ndash;&gt;-->
+              <!--            <a-select-option v-for=" c in level1" :key="c.id" :value="c.id" :disabled="doc.id === c.id">-->
+              <!--              {{c.name}}-->
+              <!--            </a-select-option>-->
+              <!--          </a-select>-->
+              <!--        </a-form-item>-->
+              <a-form-item label="顺序">
+                <a-input v-model:value="doc.sort"/>
+              </a-form-item>
+              <a-form-item label="内容">
+                <MyEditor></MyEditor>
+              </a-form-item>
+            </a-form>
+          </a-col>
+        </a-row>
       </a-layout-content>
     </a-layout>
 <!--    编辑弹出框-->
-    <a-modal v-model:open="open" title="文档表单" :confirm-loading="ModelLoading" @ok="handleModalOk" :style="{ width: '800px' }"
-    >
-      <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="wrapperCol">
-        <a-form-item label="名称">
-          <a-input v-model:value="doc.name" />
-        </a-form-item>
-        <a-form-item label="父文档">
-          <a-tree-select
-              v-model:value="doc.parent"
-              show-search
-              style="width: 100%"
-              :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-              allow-clear
-              tree-default-expand-all
-              :tree-data="treeSelectData"
-              placeholder="请选择父文档"
-              tree-node-filter-prop="label"
-              :replaceFields="{label: 'name',key: 'id',value: 'id'}"
-          >
-          </a-tree-select>
-        </a-form-item>
-<!--        <a-form-item label="父文档">-->
-<!--          <a-input v-model:value="doc.parent"/>-->
-<!--          <a-select-->
-<!--              ref="select"-->
-<!--              v-model:value="doc.parent"-->
-<!--          >-->
-<!--            <a-select-option value="0">无</a-select-option>&lt;!&ndash;doc.id === c.id 如果当前表单的id跟选项的id是一样 就不能选&ndash;&gt;-->
-<!--            <a-select-option v-for=" c in level1" :key="c.id" :value="c.id" :disabled="doc.id === c.id">-->
-<!--              {{c.name}}-->
-<!--            </a-select-option>-->
-<!--          </a-select>-->
-<!--        </a-form-item>-->
-        <a-form-item label="顺序">
-          <a-input v-model:value="doc.sort"/>
-        </a-form-item>
-        <a-form-item label="内容">
-          <MyEditor></MyEditor>
-        </a-form-item>
-      </a-form>
-    </a-modal>
+<!--    <a-modal v-model:open="open" title="文档表单" :confirm-loading="ModelLoading" @ok="handleModalOk"-->
+<!--    >-->
+<!--      -->
+<!--    </a-modal>-->
   </a-layout>
 </template>
 <script lang="ts">

@@ -10,7 +10,7 @@
         <p>
           <a-form layout="inline" :model="param">
             <a-form-item>
-              <a-button type="primary" @click="handleQuery({page: 1, size: pagination.pageSize})">
+              <a-button type="primary" @click="handleQuery({page: 1, size: 100})">
                 查询
               </a-button>
             </a-form-item>
