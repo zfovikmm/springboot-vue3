@@ -7,7 +7,7 @@
       <a-layout-content
           :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
       >
-        <a-row>
+        <a-row :gutter="24">
           <a-col :span="8">
             <p>
               <a-form layout="inline" :model="param">
@@ -30,13 +30,14 @@
                 :data-source="level1"
                 :loading="loading"
                 :pagination="false"
+                size="small"
             >
               <template #cover="{ text: cover }">
                 <img v-if="cover" :src="cover" alt="avatar" />
               </template>
               <template v-slot:action="{ text, record }">
                 <a-space size="small">
-                  <a-button type="primary" @click="edit(record)">
+                  <a-button type="primary" @click="edit(record)" size="small">
                     编辑
                   </a-button>
                   <!--                    气泡确认框-->
@@ -55,11 +56,21 @@
             </a-table>
           </a-col>
           <a-col :span="16">
-            <a-form :model="doc" :label-col="{ span: 6 }" :wrapper-col="wrapperCol">
-              <a-form-item label="名称">
-                <a-input v-model:value="doc.name" />
+            <p>
+              <a-form layout="inline" :model="param">
+                <a-form-item>
+                  <a-button type="primary" @click="handleSave()">
+                    保存
+                  </a-button>
+                </a-form-item>
+              </a-form>
+            </p>
+
+            <a-form :model="doc" layout="vertical" >
+              <a-form-item >
+                <a-input v-model:value="doc.name" placeholder="名称"/>
               </a-form-item>
-              <a-form-item label="父文档">
+              <a-form-item >
                 <a-tree-select
                     v-model:value="doc.parent"
                     show-search
@@ -86,11 +97,11 @@
               <!--            </a-select-option>-->
               <!--          </a-select>-->
               <!--        </a-form-item>-->
-              <a-form-item label="顺序">
-                <a-input v-model:value="doc.sort"/>
+              <a-form-item >
+                <a-input v-model:value="doc.sort" placeholder="顺序"/>
               </a-form-item>
-              <a-form-item label="内容">
-                <MyEditor></MyEditor>
+              <a-form-item >
+                <MyEditor/>
               </a-form-item>
             </a-form>
           </a-col>
@@ -132,17 +143,18 @@ export default defineComponent({
     const columns = [
       {
         title: '名称',
-        dataIndex: 'name'
+        dataIndex: 'name',
+        slots: { customRender: 'name' }
       },
-      {
-        title: '父文档',
-        key: 'parent',
-        dataIndex: 'parent'
-      },
-      {
-        title: '顺序',
-        dataIndex: 'sort'
-      },
+      // {
+      //   title: '父文档',
+      //   key: 'parent',
+      //   dataIndex: 'parent'
+      // },
+      // {
+      //   title: '顺序',
+      //   dataIndex: 'sort'
+      // },
       {
         title: 'Action',
         key: 'action',
@@ -317,7 +329,7 @@ export default defineComponent({
 
     };
 
-    const handleModalOk = () => {
+    const handleSave = () => {
       ModelLoading.value = true;
     // -------保存--------
       axios.post("/doc/save", doc.value).then((response) => {
@@ -359,7 +371,7 @@ export default defineComponent({
       //表单内容
       doc,
       ModelLoading,
-      handleModalOk,
+      handleSave,
       open,
 
       //文档分类无限级树
