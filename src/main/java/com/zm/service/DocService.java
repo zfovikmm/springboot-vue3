@@ -122,4 +122,10 @@ public class DocService {
         System.out.println("ids===========>"+ids);
         docMapper.deleteBatchIds(ids);
     }
+
+    //根据id进行查找文档
+    public String findContent(long id ){
+        Content content = contentMapper.selectById(id);
+        return content.getContent();
+    }
 }

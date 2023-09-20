@@ -68,4 +68,13 @@ public class DocController {
         docService.delete(list);
         return resp;
     }
+
+    //点击某一个文档的时候在去加载文档内容
+    @GetMapping("/find-content/{id}")
+    public CommonResp findContent(@PathVariable long id){
+        CommonResp<String> resp = new CommonResp<>();
+        String content = docService.findContent(id);
+        resp.setContent(content);
+        return resp;
+    }
 }

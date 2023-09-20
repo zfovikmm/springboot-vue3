@@ -218,6 +218,25 @@ export default defineComponent({
     };
 
 
+
+    /**
+     * 文档查询
+     **/
+    const handleQueryContent = () => {
+      loading.value = true;
+      axios.get("/doc/find-content/"+ doc.value.id).then((response) => {
+        const data = response.data;
+        //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
+        if (data.success){
+          valueHtml.value = data.content;
+        }else {
+          //使用ant design vue的message
+          message.error(data.message)
+        }
+      });
+    };
+
+
     //-------表单-------
     //因为树选择组件的属性状态，会随当前编辑的节点而变化
     const treeSelectData = ref();
@@ -231,16 +250,16 @@ export default defineComponent({
     const edit = (record: any) => {
       open.value = true;
       doc.value = Tool.copy(record)
-
+      //查询文档内容
+      handleQueryContent()
       //不能选择当前节点机器所有子孙节点，所有父节点，会使树断开
       treeSelectData.value = Tool.copy(level1.value);
       setDisable(treeSelectData.value,record.id);
 
       //为选择树添加一个 “无”
       treeSelectData.value.unshift({id: 0, name: '无'})
-
+      handleQuery()
     };
-
     //------------新增
     const add = () => {
       open.value = true;
