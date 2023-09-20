@@ -262,6 +262,8 @@ export default defineComponent({
     };
     //------------新增
     const add = () => {
+      //清空富文本框
+      valueHtml.value = ''
       open.value = true;
       doc.value = {
         ebookId: route.query.ebookId
@@ -408,11 +410,12 @@ export default defineComponent({
         //只要有返回就将loading效果去掉
         ModelLoading.value = false;
         const data = response.data;
-        console.log()
         if (data.success){  //data = commonResp
-          open.value = false;
+          // open.value = false;
+          message.success("保存成功！")
           //重新加载列表
           handleQuery();
+
         }else {
           message.error(data.message)
         }
