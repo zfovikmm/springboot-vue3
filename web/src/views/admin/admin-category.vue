@@ -166,9 +166,6 @@ export default defineComponent({
       category.value = {}
     };
 
-
-
-
     //------------删除
     const handleDelete = (id: number) => {
       console.log("id======>"+id)

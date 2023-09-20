@@ -1,4 +1,4 @@
-<template>
+<template >
   <div style="border: 1px solid #ccc">
     <Toolbar
         style="border-bottom: 1px solid #ccc"

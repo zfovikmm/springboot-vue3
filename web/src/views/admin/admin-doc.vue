@@ -103,7 +103,21 @@
                 <a-input v-model:value="doc.sort" placeholder="顺序"/>
               </a-form-item>
               <a-form-item >
-                <MyEditor/>
+                <div style="border: 1px solid #ccc">
+                  <Toolbar
+                      style="border-bottom: 1px solid #ccc"
+                      :editor="editorRef"
+                      :defaultConfig="toolbarConfig"
+                      :mode="mode"
+                  />
+                  <Editor
+                      style="height: 500px; overflow-y: hidden;"
+                      v-model="valueHtml"
+                      :defaultConfig="editorConfig"
+                      :mode="mode"
+                      @onCreated="handleCreated"
+                  />
+                </div>
               </a-form-item>
             </a-form>
           </a-col>
@@ -118,31 +132,33 @@
   </a-layout>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref , createVNode , inject} from 'vue';
+import { defineComponent, onMounted, ref , createVNode ,onBeforeUnmount ,shallowRef } from 'vue';
 import axios from 'axios';
 import {message, Modal} from "ant-design-vue";
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
 import ExclamationCircleOutlined from "@ant-design/icons-vue/ExclamationCircleOutlined";
-
 //引入富文本组件
-import MyEditor from '../../components/MyEditor.vue'
+import '@wangeditor/editor/dist/css/style.css' // 引入 css
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 
 
 export default defineComponent({
   name: 'AdminDoc',
   components:{
-    MyEditor
+    Editor, Toolbar
   },
   setup() {
+
     //通过这个可以获取路由信息
     const route = useRoute()
     const param = ref();
     param.value = {};
     const docs = ref();
     const loading = ref(false);
-    //获取富文本内容
-    const valueHtmlFromChild = inject('valueHtml')
+
+
+
     const columns = [
       {
         title: '名称',
@@ -332,13 +348,42 @@ export default defineComponent({
 
 
     };
+    //富文本
+    // 编辑器实例，必须用 shallowRef
+    const editorRef = shallowRef()
+
+    // 内容 HTML
+    const valueHtml = ref('')
+
+    // 模拟 ajax 异步获取内容
+    onMounted(() => {
+      setTimeout(() => {
+        valueHtml.value = ''
+      }, 1500)
+    })
+
+    const toolbarConfig = {}
+    const editorConfig = { placeholder: '请输入内容...' }
+
+    // 组件销毁时，也及时销毁编辑器
+    onBeforeUnmount(() => {
+      const editor = editorRef.value
+      if (editor == null) return
+      editor.destroy()
+    })
+
+    const handleCreated = (editor: any) => {
+      editorRef.value = editor // 记录 editor 实例，重要！
+    }
+
+
+
 
     const handleSave = () => {
       ModelLoading.value = true;
 
-      console.log("MyEditor.value.valueHtml======》")
-      doc.value.content = "123123"
 
+      doc.value.content = valueHtml.value
     // -------保存--------
       axios.post("/doc/save", doc.value).then((response) => {
         //只要有返回就将loading效果去掉
@@ -384,6 +429,14 @@ export default defineComponent({
 
       //文档分类无限级树
       treeSelectData,
+
+      //富文本
+      editorRef,
+      valueHtml,
+      mode: 'default', // 或 'simple'
+      toolbarConfig,
+      editorConfig,
+      handleCreated
 
     }
   }
