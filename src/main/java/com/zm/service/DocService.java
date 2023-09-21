@@ -1,6 +1,7 @@
 package com.zm.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zm.entity.Content;
@@ -126,6 +127,25 @@ public class DocService {
     //根据id进行查找文档
     public String findContent(long id ){
         Content content = contentMapper.selectById(id);
-        return content.getContent();
+        if (ObjectUtils.isEmpty(content)){
+            return "";
+        }else {
+            return content.getContent();
+        }
     }
+
+//    public List<DocQueryResp> all(long ebookId){
+//        QueryWrapper<Doc> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("ebook_id",ebookId);
+//        queryWrapper.orderByAsc("sort");
+//
+//        List<Doc> list = this.list(queryWrapper);
+//        Doc doc = docMapper.selectById(ebookId);
+//        docMapper.select(doc.getId())
+//        DocQueryResp docQueryResp = CopyUtil.copy(docs, DocQueryResp.class);
+//        return list;
+//    }
+
+
+
 }
