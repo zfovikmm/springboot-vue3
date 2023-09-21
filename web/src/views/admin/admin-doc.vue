@@ -102,6 +102,11 @@
               <a-form-item >
                 <a-input v-model:value="doc.sort" placeholder="顺序"/>
               </a-form-item>
+              <a-form-item>
+                <a-button type="primary" @click="handlePreviewContent()">
+                  <EyeOutlined /> 内容预览
+                </a-button>
+              </a-form-item>
               <a-form-item >
                 <div style="border: 1px solid #ccc">
                   <Toolbar
@@ -122,6 +127,11 @@
             </a-form>
           </a-col>
         </a-row>
+
+        <a-drawer width="900" placement="right" :closable="false" :visible="drawerVisible" @close="onDrawerClose">
+          <div class="wangeditor" :innerHTML="previewHtml"></div>
+        </a-drawer>
+
       </a-layout-content>
     </a-layout>
 <!--    编辑弹出框-->
@@ -156,7 +166,9 @@ export default defineComponent({
     param.value = {};
     const docs = ref();
     const loading = ref(false);
-
+    //因为树选择组件的属性状态，会随当前编辑的节点而变化
+    const treeSelectData = ref();
+    treeSelectData.value = [];
 
 
     const columns = [
@@ -209,6 +221,10 @@ export default defineComponent({
           level1.value = [];
           //自己写的工具类
           level1.value=Tool.array2Tree(docs.value,0);
+          // 父文档下拉框初始化，相当于点击新增
+          treeSelectData.value = Tool.copy(level1.value) || [];
+          // 为选择树添加一个"无"
+          treeSelectData.value.unshift({id: 0, name: '无'});
 
         }else {
           //使用ant design vue的message
@@ -217,7 +233,17 @@ export default defineComponent({
       });
     };
 
-
+    //富文本内容预览
+    const drawerVisible = ref(false);
+    const previewHtml = ref();
+    const handlePreviewContent = () => {
+      const html = valueHtml.value;
+      previewHtml.value = html;
+      drawerVisible.value = true;
+    };
+    const onDrawerClose = () => {
+      drawerVisible.value = false;
+    };
 
     /**
      * 文档查询
@@ -238,12 +264,12 @@ export default defineComponent({
 
 
     //-------表单-------
-    //因为树选择组件的属性状态，会随当前编辑的节点而变化
-    const treeSelectData = ref();
-    treeSelectData.value = [];
+
 
     const doc = ref();
-    doc.value = {};
+    doc.value = {
+      ebookId: route.query.ebookId
+    }
     const open = ref<boolean>(false);
     const ModelLoading = ref<boolean>(false);
     //------------编辑
@@ -458,7 +484,14 @@ export default defineComponent({
       mode: 'default', // 或 'simple'
       toolbarConfig,
       editorConfig,
-      handleCreated
+      handleCreated,
+
+      //富文本内容预览
+
+      drawerVisible,
+      previewHtml,
+      handlePreviewContent,
+      onDrawerClose,
 
     }
   }

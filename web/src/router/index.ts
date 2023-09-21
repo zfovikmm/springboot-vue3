@@ -7,6 +7,7 @@ import AdminDoc from '../views/admin/admin-doc.vue'
 import AdminUser from '../views/admin/admin-user.vue'
 import store from "@/store";
 import {Tool} from "@/util/tool";
+import Doc from '../views/docView.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -14,6 +15,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'home',
     //指定该路由对应的组件是"HomeView"
     component: HomeView
+  },
+  {
+    path: '/doc',
+    name: 'Doc',
+    component: Doc
   },
   {
     path: '/about',

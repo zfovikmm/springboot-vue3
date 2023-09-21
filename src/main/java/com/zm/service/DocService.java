@@ -8,6 +8,7 @@ import com.zm.entity.Content;
 import com.zm.entity.Doc;
 import com.zm.mapper.ContentMapper;
 import com.zm.mapper.DocMapper;
+import com.zm.mapper.MyDocMapper;
 import com.zm.req.DocQueryReq;
 import com.zm.req.DocSaveReq;
 import com.zm.resp.DocQueryResp;
@@ -37,6 +38,10 @@ public class DocService {
 
     @Resource
     private ContentMapper contentMapper;
+
+    @Resource
+    private MyDocMapper myDocMapper;
+
     //查询
     public List<DocQueryResp> list(){
         List<Doc> doclist = docMapper.selectList(null);
@@ -127,6 +132,8 @@ public class DocService {
     //根据id进行查找文档
     public String findContent(long id ){
         Content content = contentMapper.selectById(id);
+        //文档阅读数+1
+        myDocMapper.increaseViewCount(id);
         if (ObjectUtils.isEmpty(content)){
             return "";
         }else {
@@ -146,6 +153,9 @@ public class DocService {
 //        return list;
 //    }
 
-
+    //点赞
+    public void vote(long id){
+        myDocMapper.increaseVoteCount(id);
+    }
 
 }

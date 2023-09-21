@@ -77,6 +77,15 @@ public class DocController {
         resp.setContent(content);
         return resp;
     }
+
+    //点赞
+    @GetMapping("/vote/{id}")
+    public CommonResp vote(@PathVariable long id ){
+        CommonResp commonResp = new CommonResp();
+        docService.vote(id);
+        return  commonResp;
+    }
+
     //查询当前电子书下所有的文档
 //    @GetMapping("/all/{ebookId}")
 //    public CommonResp all(@PathVariable long ebookId){
