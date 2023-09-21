@@ -9,5 +9,5 @@ public interface MyDocMapper {
     public void increaseViewCount(@Param("id") long id );
 
     //点赞
-    public viod increaseVoteCount(@Param("id") long id);
+    public void increaseVoteCount(@Param("id") long id);
 }

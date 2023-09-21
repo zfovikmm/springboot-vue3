@@ -6,6 +6,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.zm.entity.Content;
 import com.zm.entity.Doc;
+import com.zm.exception.BusinessException;
+import com.zm.exception.BusinessExceptionCode;
 import com.zm.mapper.ContentMapper;
 import com.zm.mapper.DocMapper;
 import com.zm.mapper.MyDocMapper;
@@ -14,6 +16,8 @@ import com.zm.req.DocSaveReq;
 import com.zm.resp.DocQueryResp;
 import com.zm.resp.PageResp;
 import com.zm.util.CopyUtil;
+import com.zm.util.RedisUtil;
+import com.zm.util.RequestContext;
 import com.zm.util.SnowFlake;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +45,9 @@ public class DocService {
 
     @Resource
     private MyDocMapper myDocMapper;
+
+    @Resource
+    public RedisUtil redisUtil;
 
     //查询
     public List<DocQueryResp> list(){
@@ -155,7 +162,14 @@ public class DocService {
 
     //点赞
     public void vote(long id){
-        myDocMapper.increaseVoteCount(id);
+        // myDocMapper.increaseVoteCount(id);  原本只有点赞功能
+        // 远程IP+doc.id作为key，24小时内不能重复
+        String ip = RequestContext.getRemoteAddr();
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 3600 * 24)) {
+            myDocMapper.increaseVoteCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
     }
 
 }
