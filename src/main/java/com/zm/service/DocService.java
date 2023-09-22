@@ -172,4 +172,9 @@ public class DocService {
         }
     }
 
+    //更新
+    public void updateEbookInfo(){
+        //更新电子书下的文档数据开始
+        myDocMapper.updateEbookInfo();
+    }
 }

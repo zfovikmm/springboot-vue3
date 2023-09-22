@@ -6,8 +6,11 @@ public interface MyDocMapper {
 
 
     //浏览量
-    public void increaseViewCount(@Param("id") long id );
+    void increaseViewCount(@Param("id") long id );
 
     //点赞
-    public void increaseVoteCount(@Param("id") long id);
+    void increaseVoteCount(@Param("id") long id);
+
+    //跟新
+    void updateEbookInfo();
 }
