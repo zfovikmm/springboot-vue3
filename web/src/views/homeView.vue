@@ -46,16 +46,16 @@
           <template #renderItem="{ item }">
             <a-list-item key="item.name">
               <template #actions>
-              <span>
-                <component v-bind:is="'FileOutlined'" style="margin-right: 8px" />
+                <span>
+                <component v-bind:is="'FileOutlined'" style="margin-right: 8px"/>
                 {{ item.docCount }}
               </span>
                 <span>
-                <component v-bind:is="'UserOutlined'" style="margin-right: 8px" />
+                <component v-bind:is="'UserOutlined'" style="margin-right: 8px"/>
                 {{ item.viewCount }}
               </span>
                 <span>
-                <component v-bind:is="'LikeOutlined'" style="margin-right: 8px" />
+                <component v-bind:is="'LikeOutlined'" style="margin-right: 8px"/>
                 {{ item.voteCount }}
               </span>
               </template>
@@ -178,7 +178,8 @@ export default defineComponent({
 
       // 欢迎界面
       isShowWelcome,
-      openKeys
+      openKeys,
+
 
     }
   }
