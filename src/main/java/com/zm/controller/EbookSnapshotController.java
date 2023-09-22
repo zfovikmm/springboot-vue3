@@ -20,6 +20,8 @@ public class EbookSnapshotController {
     @GetMapping("/get-statistic")
     public CommonResp getStatistic() {
         List<StatisticResp> statisticResp = ebookSnapshotService.getStatistic();
+        //服务器项目初始化时候，如果昨天没有数据返回的时只有今天
+
         CommonResp<List<StatisticResp>> commonResp = new CommonResp<>();
         commonResp.setContent(statisticResp);
         return commonResp;

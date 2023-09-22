@@ -87,6 +87,12 @@
         </a-card>
       </a-col>
     </a-row>
+    <br>
+    <a-row>
+      <a-col :span="24">
+        <div id="main" style="width: 100%;height:300px;"></div>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -94,6 +100,7 @@
 <script lang="ts">
 import axios from 'axios';
 import {defineComponent, onMounted, ref} from 'vue';
+import * as echarts from 'echarts';
 
 export default defineComponent({
   name: 'the-welcome',
@@ -109,7 +116,7 @@ export default defineComponent({
           statistic.value.voteCount = statisticResp[1].voteCount;
           statistic.value.todayViewCount = statisticResp[1].viewIncrease;
           statistic.value.todayVoteCount = statisticResp[1].voteIncrease;
-
+          console.log("=============="+statistic.value)
           // 按分钟计算当前时间点，占一天的百分比
           const now = new Date();
           const nowRate = (now.getHours() * 60 + now.getMinutes()) / (60 * 24);
@@ -122,8 +129,33 @@ export default defineComponent({
       });
     };
 
+
+    const testEcharts = () => {
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.getElementById('main'));
+// 绘制图表
+      myChart.setOption({
+        title: {
+          text: 'ECharts 入门示例'
+        },
+        tooltip: {},
+        xAxis: {
+          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
+        },
+        yAxis: {},
+        series: [
+          {
+            name: '销量',
+            type: 'bar',
+            data: [5, 20, 36, 10, 10, 20]
+          }
+        ]
+      });
+    }
+
     onMounted(() => {
       getStatistic();
+      testEcharts();
     });
 
     return {
