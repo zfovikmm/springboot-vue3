@@ -24,11 +24,11 @@ public class EbookSnapshotService {
         return  myEbookSnapshotMapper.getStatistic();
     }
 
-//    /**
-//     * 30天数值统计
-//     */
-//    public List<StatisticResp> get30Statistic() {
-//        return  myEbookSnapshotMapper.get30Statistic();
-//    }
+    /**
+     * 30天数值统计
+     */
+    public List<StatisticResp> get30Statistic() {
+        return  myEbookSnapshotMapper.get30Statistic();
+    }
 
 }
