@@ -19,7 +19,6 @@ import com.zm.util.CopyUtil;
 import com.zm.util.RedisUtil;
 import com.zm.util.RequestContext;
 import com.zm.util.SnowFlake;
-import com.zm.websocket.WebSocketServer;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -51,7 +50,7 @@ public class DocService {
     public RedisUtil redisUtil;
 
     @Resource
-    private WebSocketServer webSocketServer;
+    private WsService wsService;
 
     //查询
     public List<DocQueryResp> list(){
@@ -175,11 +174,12 @@ public class DocService {
             throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
         }
 
-        Doc docDb = docMapper.selectById(id);
         //推送消息
-        webSocketServer.sendInfo("【"+docDb.getName()+"】被点赞了！");
-
+        Doc docDb = docMapper.selectById(id);
+        wsService.senInfo("【"+docDb.getName()+"】被点赞了！");
     }
+
+
 
     //更新
     public void updateEbookInfo(){
