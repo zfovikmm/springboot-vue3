@@ -20,6 +20,7 @@ import com.zm.util.RedisUtil;
 import com.zm.util.RequestContext;
 import com.zm.util.SnowFlake;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -109,10 +110,10 @@ public class DocService {
     }
 
     //    保存
+    @Transactional
     public void save(DocSaveReq req){
         Doc doc = CopyUtil.copy(req,Doc.class);
         Content content = CopyUtil.copy(req,Content.class);
-        System.out.println("content==========>"+content);
         if(req.getId() == 0){
             //新增
             doc.setId(snowFlake.nextId());  //雪花算法生成id
