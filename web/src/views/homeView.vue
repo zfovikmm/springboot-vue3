@@ -37,7 +37,7 @@
       >
         <!--        欢迎页面-->
         <div class="welcome" v-show="isShowWelcome">
-          <the-welcome>欢迎来到电子书库</the-welcome>
+          <the-welcome></the-welcome>
         </div>
         <!--       :pagination="pagination" 分页 -->
         <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{ gutter: 20, column: 3}"
@@ -81,9 +81,13 @@ import {defineComponent, onMounted, ref} from 'vue';
 import axios from "axios";
 import {Tool} from "@/util/tool";
 import {message} from "ant-design-vue";
+import TheWelcome from "@/components/the-welcome.vue";
 
 export default defineComponent({
   name: 'HomeView',
+  components: {
+      TheWelcome
+  },
   setup() {
     const ebooks = ref();
     const openKeys =  ref();
