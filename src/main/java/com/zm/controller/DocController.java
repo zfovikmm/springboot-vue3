@@ -87,12 +87,21 @@ public class DocController {
     }
 
     //查询当前电子书下所有的文档
-//    @GetMapping("/all/{ebookId}")
-//    public CommonResp all(@PathVariable long ebookId){
+    @GetMapping("/all/{ebookId}")
+    public CommonResp all(@PathVariable long ebookId){
+        CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
+        List<DocQueryResp> list = docService.all(ebookId);
+        resp.setContent(list);
+        return resp;
+    }
+
+//    //查询
+//    @GetMapping("/list")
+//    public CommonResp list(){
 //        CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
-//        List<DocQueryResp> list = docService.all(ebookId);
+//        List<DocQueryResp> list = docService.list();
 //        resp.setContent(list);
 //        return resp;
 //    }
-
+//
 }

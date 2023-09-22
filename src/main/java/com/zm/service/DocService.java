@@ -152,15 +152,20 @@ public class DocService {
         }
     }
 
-//    public List<DocQueryResp> all(long ebookId){
-//        QueryWrapper<Doc> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.eq("ebook_id",ebookId);
-//        queryWrapper.orderByAsc("sort");
-//
-//        List<Doc> list = this.list(queryWrapper);
-//        Doc doc = docMapper.selectById(ebookId);
-//        docMapper.select(doc.getId())
-//        DocQueryResp docQueryResp = CopyUtil.copy(docs, DocQueryResp.class);
+    public List<DocQueryResp> all(long ebookId){
+        QueryWrapper<Doc> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ebook_id",ebookId);
+        queryWrapper.orderByAsc("sort");
+        List<Doc> docs = docMapper.selectList(queryWrapper);
+        List<DocQueryResp> list = CopyUtil.copyList(docs, DocQueryResp.class);
+        return list;
+    }
+
+
+    //查询
+//    public List<DocQueryResp> list(){
+//        List<Doc> doclist = docMapper.selectList(null);
+//        List<DocQueryResp> list = CopyUtil.copyList(doclist, DocQueryResp.class);
 //        return list;
 //    }
 

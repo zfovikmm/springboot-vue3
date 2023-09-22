@@ -211,7 +211,7 @@ export default defineComponent({
      **/
     const handleQuery = () => {
       loading.value = true;
-      axios.get("/doc/list").then((response) => {
+      axios.get("/doc/all/"+route.query.ebookId).then((response) => {
         loading.value = false;
         const data = response.data;
         //如果返回成功就进行查询 加了参数验证 如果page size异常就会报错
@@ -296,7 +296,7 @@ export default defineComponent({
       }
 
 
-      treeSelectData.value = Tool.copy(level1.value);
+      treeSelectData.value = Tool.copy(level1.value) || [];
 
       //为选择树添加一个“无”
       treeSelectData.value.unshift({id: 0,name: '无'})

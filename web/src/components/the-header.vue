@@ -1,5 +1,6 @@
 <template>
   <a-layout-header class="header">
+    <div class="logo">电子书库</div>
     <a-menu
         theme="dark"
         mode="horizontal"
